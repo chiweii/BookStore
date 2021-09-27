@@ -36,14 +36,13 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {   
-        // if(!Book::where('ISBN',$request->ISBN)->exists()){
+        if(!Book::where('ISBN',$request->ISBN)->exists()){
             $book = Book::create($request->all());
             $book = $book->refresh();
             return response($book, Response::HTTP_CREATED);
-        // }
-        // else{
-        //     return response(['dfgsd','sdfg'], Response::HTTP_NO_CONTENT);
-        // }
+        }else{
+            return response('The ISBN Number Book Already Exist', Response::HTTP_CONFLICT);
+        }
     }
 
     /**
