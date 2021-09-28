@@ -23,6 +23,7 @@ class CreateBooksTable extends Migration
             $table->string('author_id',255)->comment('author.id');
             $table->boolean('shelf')->default(0)->comment('上架 (1:ON ; 0:OFF)');
             $table->text('book_classification')->comment('多個 book_class.id');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

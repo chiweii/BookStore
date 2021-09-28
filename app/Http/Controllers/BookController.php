@@ -87,6 +87,11 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        // Model 有加上softDelete 所以 這邊會進行軟刪除
+        $book->delete();
+
+        // 如果要強制刪除 就用forceDelete
+        // $book->forceDelete();
+        return response(null,Response::HTTP_NO_CONTENT);
     }
 }

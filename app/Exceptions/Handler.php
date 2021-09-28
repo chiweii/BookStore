@@ -3,10 +3,23 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+
+use Symfony\Component\HttpFoundation\Response;
+
+use App\Traits\ApiResponseTrait; //引用Api回復的特徵
+
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+
+    use ApiResponseTrait; //使用特徵，將Trait撰寫的方法貼到這個類別中使用
+
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -37,5 +50,37 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception){
+
+        // 判斷要求的資料回傳格式是不是 Json
+        if($request->expectsJson()){
+
+            // 1. Model 找不到資源
+            if($exception instanceof ModelNotFoundException){
+                return $this->errorResponse(
+                    '找不到資源',
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            // 2. 網址輸入錯誤 ( 新增判斷 )
+            if($exception instanceof NotFoundHttpException){
+                return $this->errorResponse(
+                    '無效的網址',
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            // 3. 網址不接受此請求動作 ( 新增判斷 )
+            if($exception instanceof MethodNotAllowedHttpException){
+                return $this->errorResponse(
+                    $exception->getMessage(), //回傳例外的訊息
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+        }
+        return parent::render($request, $exception);
     }
 }
