@@ -21,3 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('books',BookController::class);
+
+// STATUS 說明
+
+/*
+201 請求已經被實現，而且有一個新的資源已經依據請求的需要而建立
+409 請求存在衝突無法處理該請求，也就是新增失敗(該筆資料可能已存在)
+
+*/
