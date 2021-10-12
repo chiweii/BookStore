@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('books',BookController::class);
+Route::apiResource('types',TypeController::class);
 
 // STATUS 說明
 

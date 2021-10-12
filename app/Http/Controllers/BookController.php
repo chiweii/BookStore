@@ -92,6 +92,17 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {   
+        $this->validate($request,[
+            'ISBN' => 'required',
+            'name' => 'required',
+            'description' => 'required',
+            'publisher_id' => 'required',
+            'publish_date' =>'required|date',
+            'author_id'=> 'required',
+            'book_classification' => 'required'
+        ]);
+
+
         if(!Book::where('ISBN',$request->ISBN)->exists()){
             $book = Book::create($request->all());
             $book = $book->refresh();
@@ -132,6 +143,10 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
+        $this->validate($request,[
+            'publish_date' =>'date',
+        ]);
+
         $book->update($request->all());
         return response($book,Response::HTTP_OK);
     }
