@@ -16,21 +16,11 @@ class TypeController extends Controller
      */
     public function index()
     {
-        $types = Typee::get();
+        $types = Type::get();
 
         return response([
             'data' => $types
         ],Response::HTTP_OK);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -41,15 +31,16 @@ class TypeController extends Controller
      */
     public function store(Request $request)
     {
+        
         $this->validate($request,[
             'name' => [
                 'required',
                 'max:50',
-                Rule::unique('types',name)
+                Rule::unique('types','name')
             ],
             'sort' => 'nullable|integer',
         ]);
-
+        
         if(!isset($request->sort)){
             $max = Type::max('sort');
             $request['sort'] = $max+1;
@@ -70,18 +61,9 @@ class TypeController extends Controller
      */
     public function show(Type $type)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Type  $type
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Type $type)
-    {
-        //
+        return response([
+            'data' => $type
+        ],Response::HTTP_OK);
     }
 
     /**
@@ -93,7 +75,19 @@ class TypeController extends Controller
      */
     public function update(Request $request, Type $type)
     {
-        //
+        $this->validate($request,[
+            'name' => [
+                'max:50',
+                Rule::unique('types',name)->ignore($type->name,'name')
+            ],
+            'sort' => 'nullable|integer',
+        ]);
+
+        $type->update($request->all());
+
+        return response([
+            'data' => $type
+        ],Response::HTTP_OK);
     }
 
     /**
@@ -104,6 +98,8 @@ class TypeController extends Controller
      */
     public function destroy(Type $type)
     {
-        //
+        $type->delete();
+
+        return response(null,Response::HTTP_NO_CONTENT);
     }
 }

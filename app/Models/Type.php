@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Type extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+    	'name',
+    	'sort'
+    ];
+
+    public function books(){
+    	return $this->hasMany('App\Models\Book','type_id','id');
+    }
 }

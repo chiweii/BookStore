@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Cache;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use App\Http\Resources\BookResource;
+
 class BookController extends Controller
 {
     /**
@@ -99,6 +101,7 @@ class BookController extends Controller
             'publisher_id' => 'required',
             'publish_date' =>'required|date',
             'author_id'=> 'required',
+            'type_id' => 'required',
             'book_classification' => 'required'
         ]);
 
@@ -120,7 +123,10 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        return response($book,Response::HTTP_OK);
+        $book->load('type');
+        return new BookResource($book);
+        // dd($book);
+        // return response($book,Response::HTTP_OK);
     }
 
     /**

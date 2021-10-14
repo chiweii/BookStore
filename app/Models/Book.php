@@ -19,6 +19,11 @@ class Book extends Model
     	'publish_date',
     	'author_id',
     	'shelf',
+        'type_id',
     	'book_classification'
     ];
+
+    public function type(){
+        return $this->belongsTo('App\Models\Type','type_id','id');
+    }
 }
