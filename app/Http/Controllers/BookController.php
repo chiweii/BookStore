@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 use App\Http\Resources\BookResource;
+use App\Http\Resources\BookCollection;
 
 class BookController extends Controller
 {
@@ -30,8 +31,8 @@ class BookController extends Controller
         if(Cache::has($fullUrl)){
             return Cache::get($fullUrl);
         }else{
-            // 產生查詢建構器
-            $books_query = Book::query();
+            // 產生查詢建構器，並用預處理with方法讀取關聯type資料表
+            $books_query = Book::query()->with('type');
 
             /* ----------------------篩選條件 filters 參數----------------------- */
 
@@ -71,7 +72,8 @@ class BookController extends Controller
             $books = request('limit') ? $books_query->paginate(request('limit'))->appends($queryParams) : $books_query->get();
             
             return Cache::remember($fullUrl,60,function() use ($books){
-                return response($books, Response::HTTP_OK);
+                return new BookCollection($books);
+                // return response($books, Response::HTTP_OK);
             });
         }
     }
@@ -101,15 +103,15 @@ class BookController extends Controller
             'publisher_id' => 'required',
             'publish_date' =>'required|date',
             'author_id'=> 'required',
-            'type_id' => 'required',
+            'type_id' => 'required|exists:types,id',
             'book_classification' => 'required'
         ]);
 
 
         if(!Book::where('ISBN',$request->ISBN)->exists()){
             $book = Book::create($request->all());
-            $book = $book->refresh();
-            return response($book, Response::HTTP_CREATED);
+            $book->load('type');
+            return new BookResource($book);
         }else{
             return response('The ISBN Number Book Already Exist', Response::HTTP_CONFLICT);
         }
@@ -154,7 +156,10 @@ class BookController extends Controller
         ]);
 
         $book->update($request->all());
-        return response($book,Response::HTTP_OK);
+
+        $book->load('type');
+        return new BookResource($book);
+        // return response($book,Response::HTTP_OK);
     }
 
     /**

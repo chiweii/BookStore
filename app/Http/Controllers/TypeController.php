@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
+use App\Http\Resources\TypeCollection;
+use App\Http\Resources\TypeResource;
+
 class TypeController extends Controller
 {
     /**
@@ -16,11 +19,12 @@ class TypeController extends Controller
      */
     public function index()
     {
-        $types = Type::get();
+        $types = Type::select('id','name','sort')->get();
 
-        return response([
-            'data' => $types
-        ],Response::HTTP_OK);
+        return new TypeCollection($types);
+        // return response([
+        //     'data' => $types
+        // ],Response::HTTP_OK);
     }
 
     /**
@@ -48,9 +52,7 @@ class TypeController extends Controller
 
         $type = Type::create($request->all());
 
-        return response([
-            'data' => $type
-        ],Response::HTTP_CREATED);
+        return new TypeResource($type);
     }
 
     /**
@@ -61,9 +63,7 @@ class TypeController extends Controller
      */
     public function show(Type $type)
     {
-        return response([
-            'data' => $type
-        ],Response::HTTP_OK);
+        return new TypeResource($type);
     }
 
     /**
@@ -78,16 +78,14 @@ class TypeController extends Controller
         $this->validate($request,[
             'name' => [
                 'max:50',
-                Rule::unique('types',name)->ignore($type->name,'name')
+                Rule::unique('types','name')->ignore($type->name,'name')
             ],
             'sort' => 'nullable|integer',
         ]);
 
         $type->update($request->all());
 
-        return response([
-            'data' => $type
-        ],Response::HTTP_OK);
+        return new TypeResource($type);
     }
 
     /**

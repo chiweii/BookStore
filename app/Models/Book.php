@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use Carbon\Carbon;
+
 class Book extends Model
 {
     use HasFactory;
@@ -25,5 +27,10 @@ class Book extends Model
 
     public function type(){
         return $this->belongsTo('App\Models\Type','type_id','id');
+    }
+
+    public function getPublishAgeAttribute(){
+        $diff = Carbon::now()->diff($this->publish_date);
+        return "{$diff->y}歲{$diff->m}月";    
     }
 }
