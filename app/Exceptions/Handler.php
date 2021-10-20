@@ -7,6 +7,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Illuminate\Auth\AuthenticationException;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -82,5 +83,18 @@ class Handler extends ExceptionHandler
             }
         }
         return parent::render($request, $exception);
+    }
+
+    public function unauthenticated($request, AuthenticationException $exception){
+        // client要求json格式的才回饋正確
+        if($request->expectsJson()){
+            return $this->errorResponse(
+                $exception->getMessage(),
+                Response::HTTP_UNAUTHORIZED
+            );
+        }else{
+            // 非client 請求json 轉回登入畫面
+            return redirect()->guest($exception->redirectTo() ?? route('login'));
+        }
     }
 }

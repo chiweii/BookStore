@@ -16,7 +16,8 @@ use App\Http\Controllers\TypeController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+// Route::middleware(['auth:sanctum','scope:user-info'])->get('/user', function (Request $request) {
+Route::middleware(['auth:api','scope:user-info'])->get('/user', function (Request $request) {	
     return $request->user(); 
 });
 

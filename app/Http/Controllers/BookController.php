@@ -13,6 +13,11 @@ use App\Http\Resources\BookCollection;
 
 class BookController extends Controller
 {
+    public function __construct(){
+        
+        $this->middleware('scopes:create-books',['only'=>['store']]);
+        $this->middleware('auth:api',['except' => ['index','show']]);
+    }
     /**
      * Display a listing of the resource.
      *

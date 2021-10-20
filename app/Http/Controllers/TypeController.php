@@ -12,6 +12,10 @@ use App\Http\Resources\TypeResource;
 
 class TypeController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware('auth:api',['except' => ['index','show']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +39,6 @@ class TypeController extends Controller
      */
     public function store(Request $request)
     {
-        
         $this->validate($request,[
             'name' => [
                 'required',
@@ -49,7 +52,7 @@ class TypeController extends Controller
             $max = Type::max('sort');
             $request['sort'] = $max+1;
         }
-
+        
         $type = Type::create($request->all());
 
         return new TypeResource($type);
