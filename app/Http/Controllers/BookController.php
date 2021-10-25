@@ -14,9 +14,15 @@ use App\Http\Resources\BookCollection;
 class BookController extends Controller
 {
     public function __construct(){
-        
-        $this->middleware('scopes:create-books',['only'=>['store']]);
-        $this->middleware('auth:api',['except' => ['index','show']]);
+
+        //客戶端 只有 有scope create-books 權限 的才能夠 store
+        $this->middleware('scopes:create-books',['only'=>['store']]); 
+
+        //客戶端 除了 書籍資料列表 跟 單一書籍資料，其餘都要有身分登入
+        $this->middleware('auth:api',['except' => ['index','show']]); 
+
+        //客戶端 僅能夠查看 書籍資料列表 跟 單一書籍資料
+        $this->middleware('client',['only'=>['index','show']]); 
     }
     /**
      * Display a listing of the resource.
@@ -101,6 +107,8 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {   
+        $this->authorize('create',Book::class);
+        
         $this->validate($request,[
             'ISBN' => 'required',
             'name' => 'required',
@@ -156,6 +164,8 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
+        $this->authorize('update',$book);
+
         $this->validate($request,[
             'publish_date' =>'date',
         ]);
@@ -175,6 +185,8 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
+        $this->authorize('delete',$book);
+
         // Model 有加上softDelete 所以 這邊會進行軟刪除
         $book->delete();
 

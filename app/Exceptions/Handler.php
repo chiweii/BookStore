@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -81,6 +82,15 @@ class Handler extends ExceptionHandler
                     Response::HTTP_NOT_FOUND
                 );
             }
+
+            // 4. API AUTH SCOPE 權限不符合
+            if($exception instanceof AuthorizationException){
+
+                return $this->errorResponse(
+                    $exception->getMessage(), //回傳例外的訊息
+                    Response::HTTP_FORBIDDEN
+                );
+            }            
         }
         return parent::render($request, $exception);
     }
