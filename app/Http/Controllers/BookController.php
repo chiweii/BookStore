@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -122,9 +124,33 @@ class BookController extends Controller
 
 
         if(!Book::where('ISBN',$request->ISBN)->exists()){
-            $book = Book::create($request->all());
-            $book->load('type');
-            return new BookResource($book);
+
+            try {
+                DB::beginTransaction();
+
+                $book = Book::create($request->all());
+                $book->load('type');
+
+                $book->likes()->attach(auth()->user()->id);
+
+                DB::commit();
+
+                return new BookResource($book);
+            } catch (Exception $e) {
+                
+                DB::rollback();
+
+                $errorMessage = 'MESSAGE : '.$e->getMessage();
+                Log::error($errorMessage);
+
+                return response(
+                    ['error' => '程式異常'], 
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
+            }
+            // $book = Book::create($request->all());
+            // $book->load('type');
+            // return new BookResource($book);
         }else{
             return response('The ISBN Number Book Already Exist', Response::HTTP_CONFLICT);
         }

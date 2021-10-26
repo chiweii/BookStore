@@ -33,4 +33,12 @@ class Book extends Model
         $diff = Carbon::now()->diff($this->publish_date);
         return "{$diff->y}歲{$diff->m}月";    
     }
+
+    public function author(){
+        return $this->belongsTo('App\Models\Author');
+    }
+
+    public function likes(){
+        return $this->belongsToMany('App\Models\User','user_book_likes')->withTimestamps();
+    }
 }

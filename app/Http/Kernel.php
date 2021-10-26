@@ -42,6 +42,7 @@ class Kernel extends HttpKernel
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'wei.api.header:X-Application-name,Wei RESTful API',
+            'wei.api.header:X-BookStore-Media-Type,v1',
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],

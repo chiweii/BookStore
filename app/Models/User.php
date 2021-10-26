@@ -48,4 +48,8 @@ class User extends Authenticatable
     public function isAdmin(){
         return $this->permission === USER::ADMIN_USER;
     }
+
+    public function likes(){
+        return $this->belongsToMany('App\Models\User','user_book_likes')->withTimestamps();
+    }
 }

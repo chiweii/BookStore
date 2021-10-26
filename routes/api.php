@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\TypeController;
+use App\Http\Controllers\Api\Book\BookLikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +22,11 @@ Route::middleware(['auth:api','scope:user-info'])->get('/user', function (Reques
     return $request->user(); 
 });
 
-Route::apiResource('books',BookController::class);
 Route::apiResource('types',TypeController::class);
+Route::apiResource('books',BookController::class);
+Route::apiResource('books.likes', BookLikeController::class)->only([
+	'index','store'
+]);
 
 // STATUS 說明
 
