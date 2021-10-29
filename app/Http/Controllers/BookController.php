@@ -118,7 +118,7 @@ class BookController extends Controller
             'publisher_id' => 'required',
             'publish_date' =>'required|date',
             'author_id'=> 'required',
-            'type_id' => 'required|exists:types,id',
+            'type_id' => 'required',
             'book_classification' => 'required'
         ]);
 
@@ -136,7 +136,7 @@ class BookController extends Controller
                 DB::commit();
 
                 return new BookResource($book);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 
                 DB::rollback();
 
