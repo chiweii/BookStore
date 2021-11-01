@@ -84,10 +84,10 @@ class Handler extends ExceptionHandler
             }
 
             // 4. API AUTH SCOPE 權限不符合
+            // dd($exception);
             if($exception instanceof AuthorizationException){
-
                 return $this->errorResponse(
-                    $exception->getMessage(), //回傳例外的訊息
+                    '存取權限不足，請確認您身分的權限範圍', //回傳例外的訊息
                     Response::HTTP_FORBIDDEN
                 );
             }            

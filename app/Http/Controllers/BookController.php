@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\BookResource;
 use App\Http\Resources\BookCollection;
 
+use App\Http\Requests\StoreBookRequest;
+
 class BookController extends Controller
 {
     public function __construct(){
@@ -107,21 +109,9 @@ class BookController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {   
         $this->authorize('create',Book::class);
-        
-        $this->validate($request,[
-            'ISBN' => 'required',
-            'name' => 'required',
-            'description' => 'required',
-            'publisher_id' => 'required',
-            'publish_date' =>'required|date',
-            'author_id'=> 'required',
-            'type_id' => 'required',
-            'book_classification' => 'required'
-        ]);
-
 
         if(!Book::where('ISBN',$request->ISBN)->exists()){
 
