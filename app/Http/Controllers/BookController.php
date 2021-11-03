@@ -14,10 +14,11 @@ use App\Http\Resources\BookResource;
 use App\Http\Resources\BookCollection;
 
 use App\Http\Requests\StoreBookRequest;
+use App\Services\BookService;
 
 class BookController extends Controller
 {
-    public function __construct(){
+    public function __construct(BookService $bookService){
 
         //客戶端 只有 有scope create-books 權限 的才能夠 store
         $this->middleware('scopes:create-books',['only'=>['store']]); 
@@ -26,7 +27,9 @@ class BookController extends Controller
         $this->middleware('auth:api',['except' => ['index','show']]); 
 
         //客戶端 僅能夠查看 書籍資料列表 跟 單一書籍資料
-        $this->middleware('client',['only'=>['index','show']]); 
+        // $this->middleware('client',['only'=>['index','show']]); 
+
+        $this->bookService = $bookService;
     }
     /**
      * Display a listing of the resource.
@@ -46,45 +49,7 @@ class BookController extends Controller
         if(Cache::has($fullUrl)){
             return Cache::get($fullUrl);
         }else{
-            // 產生查詢建構器，並用預處理with方法讀取關聯type資料表
-            $books_query = Book::query()->with('type');
-
-            /* ----------------------篩選條件 filters 參數----------------------- */
-
-            $books_query->when(!is_null(request('filters')), function ($q) {
-                
-                // 把filters 中的 @XX@ 分割 並 轉為 collect型態
-                $filters = collect(explode('@XX@', request('filters')));
-
-                // 類似 foreach 將每筆 filter 讀出
-                $filters->map(function($filter) use($q){
-                    
-                    // 分割filter 的 key value
-                    list($key,$value) = explode(':', $filter);
-
-                    // 查詢建構器 加上 where key value 條件
-                    $q->where($key, 'like', "%$value%");
-                });
-            });
-
-            /* ----------------------排列順序 filters 參數----------------------- */
-
-            $books_query->when(!is_null(request('sorts')), function ($q) {
-                
-                $sorts = collect(explode('@XX@', request('sorts')));
-
-                $sorts->map(function($sort) use($q){
-                    
-                    list($key,$value) = explode(':', $sort);
-
-                    if(in_array($value, ['asc','desc','ASC','DESC'])){
-                        $q->orderBy($key, $value);
-                    }
-                });
-            });
-
-            // 如果有分頁的筆數 再加上 否則預設抓所有
-            $books = request('limit') ? $books_query->paginate(request('limit'))->appends($queryParams) : $books_query->get();
+            $books = $this->bookService->getListData(request(), $queryParams);
             
             return Cache::remember($fullUrl,60,function() use ($books){
                 return new BookCollection($books);
