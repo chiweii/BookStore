@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Api\V1\Type;
+use App\Http\Controllers\Controller;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use App\Http\Resources\TypeCollection;
 use App\Http\Resources\TypeResource;
+
 
 class TypeController extends Controller
 {

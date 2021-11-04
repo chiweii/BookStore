@@ -2,9 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\TypeController;
-use App\Http\Controllers\Api\Book\BookLikeController;
+use App\Http\Controllers\Api\V1\Book\BookController;
+use App\Http\Controllers\Api\V1\Type\TypeController;
+use App\Http\Controllers\Api\V1\Book\BookLikeController;
 
 /*
 |--------------------------------------------------------------------------

@@ -26,7 +26,7 @@ class BookTest extends TestCase
 
         Book::factory(20)->create();
 
-        $response = $this->json('GET','api/books?&limit=10');
+        $response = $this->json('GET','api/v1/books?&limit=10');
 
         $this->withExceptionHandling();
 
@@ -74,7 +74,7 @@ class BookTest extends TestCase
 
         $response = $this->json(
             'POST',
-            'api/books',
+            'api/v1/books',
             $formData
         );
 
@@ -100,7 +100,7 @@ class BookTest extends TestCase
 
         $response = $this->json(
             'POST',
-            'api/books',
+            'api/v1/books',
             $formData
         );
 
