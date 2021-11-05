@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @OA\Info(
+ *    title="Wei Book API",
+ *    version="1.0.0",
+ * )
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;

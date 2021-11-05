@@ -6,6 +6,7 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 
 class BookService{
+
     protected function filterBooks($query , $filters){
                 
         // 把filters 中的 @XX@ 分割 並 轉為 collect型態
@@ -37,6 +38,14 @@ class BookService{
 
         return $query;
     }
+
+    /**
+     * Return all book data
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Controllers\Api\V1\Book\BookController  request()->query()
+     * @return $books
+     */
 
     public function getListData($request, $queryParams){
         // 產生查詢建構器，並用預處理with方法讀取關聯type資料表

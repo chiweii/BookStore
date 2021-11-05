@@ -158,12 +158,42 @@ class BookController extends Controller
         // return response($book,Response::HTTP_OK);
     }
 
+
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
-     */
+    * @OA\Delete(
+    *    path="/api/V1/books/{id}",
+    *    operationId="bookDelete",
+    *    tags={"Book"},
+    *    summary="刪除書籍資料",
+    *    description="刪除書籍資料",
+    *    @OA\Parameter(
+    *    　　name="id",
+    *    　　description="Book id",
+    *    　　required=true,
+    *    　　in="path",
+    *    　　@OA\Schema(
+    *      　　type="integer"
+    *    　　)
+    *　　),
+    * 　　security={
+    * 　　   {
+    * 　　     "passport": {}
+    * 　　   }
+    * 　　},
+    *　　 @OA\Response(
+    *　　    response=204,
+    * 　　   description="刪除成功回傳空值"
+    * 　　),
+    * 　　@OA\Response(
+    * 　　   response=404,
+    * 　　   description="找不到資源"
+    * 　　)
+    * )
+    * Remove the specified resource from storage.
+    *
+    * @param  \App\Models\Book  $book
+    * @return \Illuminate\Http\Response
+    */
     public function destroy(Book $book)
     {
         $this->authorize('delete',$book);
